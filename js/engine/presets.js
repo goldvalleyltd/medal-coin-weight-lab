@@ -29,18 +29,18 @@
             descZh: '高流动性压铸锌合金，适合深浮雕、镂空异形与复杂跑马奖牌（公差 ±0.15 mm）',
             colorHex: '#94A3B8'
         },
-        'cu-c260': {
-            id: 'cu-c260',
-            name: 'H65 / C26000 Brass (8.50 g/cm³)',
-            nameEn: 'H65 / C26000 Brass (8.50 g/cm³)',
-            nameZh: 'H65 冲压黄铜 (C26000 - 8.50 g/cm³)',
+        'cu-c268': {
+            id: 'cu-c268',
+            name: 'H65 / C26800 Brass (8.50 g/cm³)',
+            nameEn: 'H65 / C26800 Brass (8.50 g/cm³)',
+            nameZh: 'H65 冲压黄铜 (C26800 - 8.50 g/cm³)',
             shortName: 'H65 Stamped Brass',
             shortNameEn: 'H65 Stamped Brass',
             shortNameZh: 'H65 冲压黄铜',
             density: 8.50,
             process: 'stamped',
-            desc: 'Dense cold-stamped cartridge brass with crisp micro-text edges and mirror-polishing substrate (±0.08 mm tolerance)',
-            descEn: 'Dense cold-stamped cartridge brass with crisp micro-text edges and mirror-polishing substrate (±0.08 mm tolerance)',
+            desc: 'Dense cold-stamped yellow brass with crisp micro-text edges and mirror-polishing substrate (±0.08 mm tolerance)',
+            descEn: 'Dense cold-stamped yellow brass with crisp micro-text edges and mirror-polishing substrate (±0.08 mm tolerance)',
             descZh: '高致密冷冲压黄铜，字口锋利、镜面抛光佳，高定军警挑战币与珐琅章首选（公差 ±0.08 mm）',
             colorHex: '#EAB308'
         },

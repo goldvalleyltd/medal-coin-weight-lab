@@ -61,7 +61,7 @@
 
         // Cross-material weight benchmark: Zamak 3 vs H65 Brass
         const zincWeightGrams = parseFloat((geoResult.volumeCm3 * presets.MATERIALS['zn-zamak3'].density).toFixed(1));
-        const brassWeightGrams = parseFloat((geoResult.volumeCm3 * presets.MATERIALS['cu-c260'].density).toFixed(1));
+        const brassWeightGrams = parseFloat((geoResult.volumeCm3 * presets.MATERIALS['cu-c268'].density).toFixed(1));
         const deltaWeightGrams = parseFloat((brassWeightGrams - zincWeightGrams).toFixed(1));
 
         // DFM (Design for Manufacturing) warnings
@@ -228,7 +228,7 @@
         }
 
         const zincWeightGrams = parseFloat((geoResult.volumeCm3 * presets.MATERIALS['zn-zamak3'].density).toFixed(1));
-        const brassWeightGrams = parseFloat((geoResult.volumeCm3 * presets.MATERIALS['cu-c260'].density).toFixed(1));
+        const brassWeightGrams = parseFloat((geoResult.volumeCm3 * presets.MATERIALS['cu-c268'].density).toFixed(1));
         const deltaWeightGrams = parseFloat((brassWeightGrams - zincWeightGrams).toFixed(1));
 
         if (dfmWarningsEn.length === 0) {
