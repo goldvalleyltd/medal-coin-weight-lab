@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medal &amp; Coin Weight Estimator | 3D Challenge Coin &amp; Marathon Medal Mass &amp; Freight Calculator</title>
+  <meta name="description"
+    content="Free browser-based 3D engineering calculator for custom challenge coins and sports finisher medals. Estimate alloy mass (Zamak 3, H65 Brass, T2 Copper, SUS304), tactile heft, 2.5g lanyard shock, and export carton freight.">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/lab-theme.css">
+
+  <!-- Three.js & OrbitControls via CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+
+<body>
+
+  <div class="lab-container">
+
+    <!-- 1. Top Navigation & Brand Header -->
+    <header class="lab-header">
+      <div class="brand-group">
+        <div class="brand-logo-badge" aria-hidden="true">GV</div>
+        <div>
+          <h1 class="lab-title" data-i18n-en="Medal &amp; Coin Weight Estimator"
+            data-i18n-zh="Medal &amp; Coin Weight Estimator · 奖牌与挑战币克重实验室">Medal &amp; Coin Weight Estimator</h1>
+          <div class="lab-subtitle"
+            data-i18n-en="Industrial Mass, Tactile Heft, Neck Ergonomics &amp; B2B Carton Freight Calculator"
+            data-i18n-zh="外贸五金定制 · 克重手感、挂带颈部工学与防爆箱海空运费精准测算系统">Industrial Mass, Tactile Heft, Neck Ergonomics &amp; B2B Carton Freight Calculator</div>
+        </div>
+      </div>
+
+      <!-- Product Category Switcher -->
+      <div class="category-tabs" role="tablist" aria-label="Product Category">
+        <button type="button" id="tab-cat-coin" class="cat-tab-btn active" role="tab" aria-selected="true"
+          data-i18n-en="🪙 Challenge Coin" data-i18n-zh="🪙 挑战币模式 (Challenge Coin)">
+          🪙 Challenge Coin
+        </button>
+        <button type="button" id="tab-cat-medal" class="cat-tab-btn" role="tab" aria-selected="false"
+          data-i18n-en="🏅 Sports Finisher Medal" data-i18n-zh="🏅 赛事奖牌模式 (Sports Medal)">
+          🏅 Sports Finisher Medal
+        </button>
+      </div>
+
+      <div class="header-badge" style="display: flex; align-items: center; gap: 10px;">
+        <button type="button" id="btn-lang-toggle" class="lang-switch-btn" aria-label="Switch Language (切换中英文)">
+          🌐 <span id="lang-toggle-label">中文</span>
+        </button>
+        <a href="https://www.goldvalleyltd.com/contact-us/" target="_blank" rel="noopener"
+          style="color: inherit; text-decoration: none;"
+          data-i18n-en="⚡ Engineered by Gold Valley Lab ↗"
+          data-i18n-zh="⚡ 金瓒五金工程实验室出品 ↗">⚡ Engineered by Gold Valley Lab ↗</a>
+      </div>
+    </header>
+
+    <!-- 2. Main Split Workspace -->
+    <main class="workspace-grid">
+
+      <!-- Left Column: Parametric Controls & STL Upload -->
+      <aside class="control-panel">
+        <div class="panel-card">
+
+          <!-- Calculation Channel Switcher -->
+          <div class="mode-switcher" role="tablist" aria-label="Calculation Mode">
+            <button type="button" id="btn-mode-quick" class="mode-btn active" role="tab" aria-selected="true"
+              data-i18n-en="⚡ Parametric Quick Mode" data-i18n-zh="⚡ 快速参数拟合法 (Quick Mode)">⚡ Parametric Quick Mode</button>
+            <button type="button" id="btn-mode-pro" class="mode-btn" role="tab" aria-selected="false"
+              data-i18n-en="🧊 Pro 3D STL Mesh" data-i18n-zh="🧊 3D 网格积分法 (Pro STL)">🧊 Pro 3D STL Mesh</button>
+          </div>
+
+          <!-- ================= [Channel A-1] Challenge Coin Controls ================= -->
+          <div id="panel-coin-controls">
+            <h2 class="panel-title"><span class="step-num">1</span> <span
+                data-i18n-en="Coin Geometry &amp; Edge Milling" data-i18n-zh="挑战币几何尺寸与边缘滚齿">Coin Geometry &amp; Edge Milling</span></h2>
+
+            <!-- Coin Diameter -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="slider-coin-d" data-i18n-en="Coin Diameter (Ø)"
+                  data-i18n-zh="币体直径 (Diameter)">Coin Diameter (Ø)</label>
+                <span id="val-coin-d" class="control-value">45.0 mm (1.77")</span>
+              </div>
+              <input type="range" id="slider-coin-d" min="25" max="90" step="0.5" value="45">
+              <div class="preset-chips" id="coin-d-chips">
+                <button type="button" class="chip-btn" data-coin-d="38.1">1.5" (38.1mm)</button>
+                <button type="button" class="chip-btn active" data-coin-d="45">1.75" (45mm Std)</button>
+                <button type="button" class="chip-btn" data-coin-d="50.8">2.0" (50.8mm)</button>
+                <button type="button" class="chip-btn" data-coin-d="63.5">2.5" (63.5mm)</button>
+              </div>
+            </div>
+
+            <!-- Coin Thickness -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="slider-coin-t" data-i18n-en="Base Rim Thickness"
+                  data-i18n-zh="基础边缘厚度 (Thickness)">Base Rim Thickness</label>
+                <span id="val-coin-t" class="control-value">3.5 mm (0.14")</span>
+              </div>
+              <input type="range" id="slider-coin-t" min="2.0" max="6.0" step="0.5" value="3.5">
+              <div class="preset-chips" id="coin-t-chips">
+                <button type="button" class="chip-btn" data-coin-t="3.0">3.0 mm (Standard)</button>
+                <button type="button" class="chip-btn active" data-coin-t="3.5">3.5 mm (Military Std)</button>
+                <button type="button" class="chip-btn" data-coin-t="4.0">4.0 mm (Heavy 3D)</button>
+              </div>
+            </div>
+
+            <!-- Relief Process -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="select-coin-relief" data-i18n-en="Surface Relief &amp; Enamel Style"
+                  data-i18n-zh="双面浮雕与填色层级 (Relief)">Surface Relief &amp; Enamel Style</label>
+              </div>
+              <select id="select-coin-relief">
+                <option value="flat-2d" data-i18n-en="Flat / Enamel Filled (0.0 mm relief)"
+                  data-i18n-zh="纯平烤漆 / 仿珐琅填色 (Flat / Enamel)">Flat / Enamel Filled (0.0 mm relief)</option>
+                <option value="stamped-2d" data-i18n-en="2D Multi-Level Relief (0.35 mm relief)"
+                  data-i18n-zh="2D 双面标准立体阶梯 (0.35 mm 凸起)">2D Multi-Level Relief (0.35 mm relief)</option>
+                <option value="semi-3d" selected data-i18n-en="2.5D Sculpted Semi-Relief (0.75 mm relief)"
+                  data-i18n-zh="2.5D 双面弧面中浮雕 (0.75 mm 凸起)">2.5D Sculpted Semi-Relief (0.75 mm relief)</option>
+                <option value="high-3d" data-i18n-en="3D Deep High-Relief (1.60 mm relief)"
+                  data-i18n-zh="3D 深度高浮雕精雕 (1.60 mm 强隆起)">3D Deep High-Relief (1.60 mm relief)</option>
+              </select>
+            </div>
+
+            <!-- Edge Milling -->
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="select-coin-edge" data-i18n-en="CNC / Die Edge Cut Style"
+                  data-i18n-zh="边缘滚花切边工艺 (Edge Cut)">CNC / Die Edge Cut Style</label>
+              </div>
+              <select id="select-coin-edge">
+                <option value="flat" selected data-i18n-en="Standard Smooth Edge (1.00× Vol)"
+                  data-i18n-zh="标准平滑光边 (Smooth Edge - 1.00×)">Standard Smooth Edge (1.00× Vol)</option>
+                <option value="reeded" data-i18n-en="Reeded Milled Edge (0.985× Vol)"
+                  data-i18n-zh="细齿硬币防滑滚边 (Reeded Edge - 0.985×)">Reeded Milled Edge (0.985× Vol)</option>
+                <option value="diamond-cut" data-i18n-en="Diamond Cross-Cut Edge (0.955× Vol)"
+                  data-i18n-zh="钻石菱形斜切花边 (Diamond Cut - 0.955×)">Diamond Cross-Cut Edge (0.955× Vol)</option>
+                <option value="rope" data-i18n-en="Twisted Rope Edge (0.965× Vol)"
+                  data-i18n-zh="麻花绳索扭纹边 (Rope Cut - 0.965×)">Twisted Rope Edge (0.965× Vol)</option>
+                <option value="wave" data-i18n-en="Petal / Wave Cut Edge (0.960× Vol)"
+                  data-i18n-zh="波浪弧齿花边 (Wave Edge - 0.960×)">Petal / Wave Cut Edge (0.960× Vol)</option>
+                <option value="lettered" data-i18n-en="Laser / Stamped Edge Text (0.990× Vol)"
+                  data-i18n-zh="边缘激光刻字 / 序列号 (Edge Text - 0.990×)">Laser / Stamped Edge Text (0.990× Vol)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ================= [Channel A-2] Sports Medal Controls ================= -->
+          <div id="panel-medal-controls" style="display: none;">
+            <h2 class="panel-title"><span class="step-num">1</span> <span
+                data-i18n-en="Medal Contour, Cutout &amp; Lanyard" data-i18n-zh="赛事奖牌轮廓、镂空与织带配置">Medal Contour, Cutout &amp; Lanyard</span></h2>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="select-medal-shape" data-i18n-en="Medal Outer Silhouette"
+                  data-i18n-zh="奖牌外轮廓形态 (Shape)">Medal Outer Silhouette</label>
+              </div>
+              <select id="select-medal-shape">
+                <option value="round" selected data-i18n-en="Classic Marathon Round (k = 0.785)"
+                  data-i18n-zh="经典正圆跑马奖牌 (Round - k=0.785)">Classic Marathon Round (k = 0.785)</option>
+                <option value="shield" data-i18n-en="Heraldic Championship Shield (k = 0.720)"
+                  data-i18n-zh="皇家骑士盾形奖牌 (Shield - k=0.720)">Heraldic Championship Shield (k = 0.720)</option>
+                <option value="oval" data-i18n-en="Vintage Oval Crest (k = 0.750)"
+                  data-i18n-zh="古典椭圆勋章 (Oval - k=0.750)">Vintage Oval Crest (k = 0.750)</option>
+                <option value="polygon" data-i18n-en="Octagonal / Esports Geometric (k = 0.828)"
+                  data-i18n-zh="现代八角几何多边形 (Octagon - k=0.828)">Octagonal / Esports Geometric (k = 0.828)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" id="label-medal-l" for="slider-medal-l"
+                  data-i18n-en="Medal Diameter / Height" data-i18n-zh="奖牌直径 / 总高 (Height)">Medal Diameter / Height</label>
+                <span id="val-medal-l" class="control-value">70.0 mm (2.76")</span>
+              </div>
+              <input type="range" id="slider-medal-l" min="45" max="120" step="1" value="70">
+              <div class="preset-chips" id="medal-l-chips">
+                <button type="button" class="chip-btn" data-medal-l="63.5">2.5" (63.5mm)</button>
+                <button type="button" class="chip-btn active" data-medal-l="70">70mm (2.75")</button>
+                <button type="button" class="chip-btn" data-medal-l="76.2">3.0" (76.2mm Std)</button>
+                <button type="button" class="chip-btn" data-medal-l="88.9">3.5" (88.9mm)</button>
+              </div>
+            </div>
+
+            <div class="control-group is-disabled" id="group-medal-w">
+              <div class="control-label-row">
+                <label class="control-label" for="slider-medal-w" data-i18n-en="Medal Width (Shield / Oval)"
+                  data-i18n-zh="奖牌总宽度 (仅盾形/椭圆独立调节)">Medal Width (Shield / Oval)</label>
+                <span id="val-medal-w" class="control-value">70.0 mm (2.76")</span>
+              </div>
+              <input type="range" id="slider-medal-w" min="45" max="120" step="1" value="70" disabled>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="slider-medal-t" data-i18n-en="Medal Base Thickness"
+                  data-i18n-zh="奖牌主体厚度 (Thickness)">Medal Base Thickness</label>
+                <span id="val-medal-t" class="control-value">4.0 mm (0.16")</span>
+              </div>
+              <input type="range" id="slider-medal-t" min="2.5" max="7.0" step="0.5" value="4.0">
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="select-medal-relief" data-i18n-en="Surface Relief &amp; Enamel Style"
+                  data-i18n-zh="正反面浮雕与填色工艺 (Relief)">Surface Relief &amp; Enamel Style</label>
+              </div>
+              <select id="select-medal-relief">
+                <option value="flat-2d" data-i18n-en="Flat / Enamel Filled (0.0 mm relief)"
+                  data-i18n-zh="纯平烤漆 / 仿珐琅填色 (Flat / Enamel)">Flat / Enamel Filled (0.0 mm relief)</option>
+                <option value="stamped-2d" data-i18n-en="2D Multi-Level Relief (0.35 mm relief)"
+                  data-i18n-zh="2D 双面标准立体阶梯 (0.35 mm 凸起)">2D Multi-Level Relief (0.35 mm relief)</option>
+                <option value="semi-3d" selected data-i18n-en="2.5D Sculpted Semi-Relief (0.75 mm relief)"
+                  data-i18n-zh="2.5D 双面弧面中浮雕 (0.75 mm 凸起)">2.5D Sculpted Semi-Relief (0.75 mm relief)</option>
+                <option value="high-3d" data-i18n-en="3D Deep High-Relief (1.60 mm relief)"
+                  data-i18n-zh="3D 深度高浮雕精雕 (1.60 mm 强隆起)">3D Deep High-Relief (1.60 mm relief)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="slider-medal-cutout" data-i18n-en="Open Cutout Ratio (%)"
+                  data-i18n-zh="内部贯穿镂空面积比 (Cutout %)">Open Cutout Ratio (%)</label>
+                <span id="val-medal-cutout" class="control-value">0%</span>
+              </div>
+              <input type="range" id="slider-medal-cutout" min="0" max="55" step="5" value="0">
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="select-medal-loop" data-i18n-en="Top Hanger Structure"
+                  data-i18n-zh="顶部穿带吊耳结构 (Hanger)">Top Hanger Structure</label>
+              </div>
+              <select id="select-medal-loop">
+                <option value="cast-loop" selected data-i18n-en="Integrated Cast Bridge Slot (32 kgf / 314 N)"
+                  data-i18n-zh="一体铸造宽幅穿带扁桥 (32 kgf / 314 N)">Integrated Cast Bridge Slot (32 kgf / 314 N)</option>
+                <option value="jump-ring" data-i18n-en="Split Wire Jump Ring Ø1.5 mm (5.5 kgf / 54 N)"
+                  data-i18n-zh="外接开口细铁丝跳环 Ø1.5 mm (5.5 kgf / 54 N)">Split Wire Jump Ring Ø1.5 mm (5.5 kgf / 54 N)</option>
+              </select>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label-row">
+                <label class="control-label" for="select-medal-ribbon" data-i18n-en="Neck Lanyard / Ribbon Spec"
+                  data-i18n-zh="配套挂脖织带规格 (Neck Ribbon)">Neck Lanyard / Ribbon Spec</label>
+              </div>
+              <select id="select-medal-ribbon">
+                <option value="sub-30" selected data-i18n-en="30 mm (1.2&quot;) Heavy Satin Lanyard (+14.8 g)"
+                  data-i18n-zh="30 mm (1.2&quot;) 加厚加密热转印挂带 (+14.8 g)">30 mm (1.2") Heavy Satin Lanyard (+14.8 g)</option>
+                <option value="jacquard-38" data-i18n-en="38 mm (1.5&quot;) Pro Marathon Jacquard (+19.5 g)"
+                  data-i18n-zh="38 mm (1.5&quot;) 专业马拉松宽幅提花织带 (+19.5 g)">38 mm (1.5") Pro Marathon Jacquard (+19.5 g)</option>
+                <option value="sub-25" data-i18n-en="25 mm (1.0&quot;) Sublimated Polyester (+11.5 g)"
+                  data-i18n-zh="25 mm (1.0&quot;) 涤纶热转印挂带 (+11.5 g)">25 mm (1.0") Sublimated Polyester (+11.5 g)</option>
+                <option value="none" data-i18n-en="Medal Body Only (No Ribbon +0.0 g)"
+                  data-i18n-zh="仅测算金属奖牌本体 (+0.0 g)">Medal Body Only (No Ribbon +0.0 g)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ================= [Channel B] Pro 3D STL Mesh Upload ================= -->
+          <div id="panel-pro-controls" style="display: none;">
+            <h2 class="panel-title"><span class="step-num">1</span> <span
+                data-i18n-en="3D CAD Mesh Divergence Integration" data-i18n-zh="3D 网格高斯散度微积分">3D CAD Mesh Divergence Integration</span></h2>
+
+            <div id="drop-zone" class="upload-dropzone" role="button" tabindex="0"
+              aria-label="Upload 3D STL or OBJ file">
+              <div style="font-size: 28px; margin-bottom: 6px;" aria-hidden="true">📂</div>
+              <div style="font-size: 13px; font-weight: 700; color: #F8FAFC;"
+                data-i18n-en="Click or Drag &amp; Drop .STL / .OBJ File"
+                data-i18n-zh="点击或拖拽上传 .STL / .OBJ 三维模型">Click or Drag &amp; Drop .STL / .OBJ File</div>
+              <div style="font-size: 11px; color: #94A3B8; margin-top: 4px;"
+                data-i18n-en="100% Client-Side Computation — CAD Files Never Leave Your Browser"
+                data-i18n-zh="100% 浏览器本地微积分运算，模具图纸绝不上传云端">100% Client-Side Computation — CAD Files Never Leave Your Browser</div>
+              <label for="file-input" class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);">Upload 3D STL or OBJ file</label>
+              <input type="file" id="file-input" accept=".stl,.obj" style="display: none;">
+            </div>
+
+            <div style="margin-bottom: 14px;">
+              <div style="font-size: 11.5px; color: #94A3B8; margin-bottom: 6px;"
+                data-i18n-en="Or load a factory benchmark CAD mesh:"
+                data-i18n-zh="或一键加载金瓒车间标准测试网格：">Or load a factory benchmark CAD mesh:</div>
+              <div class="preset-chips">
+                <button type="button" id="btn-sample-coin" class="chip-btn"
+                  data-i18n-en="🪙 45mm 3D Challenge Coin STL" data-i18n-zh="🪙 45mm 双面浮雕挑战币.stl">🪙 45mm 3D Challenge Coin STL</button>
+                <button type="button" id="btn-sample-medal" class="chip-btn"
+                  data-i18n-en="🏅 70mm Marathon Medal STL" data-i18n-zh="🏅 70mm 马拉松完赛奖牌.stl">🏅 70mm Marathon Medal STL</button>
+              </div>
+            </div>
+
+            <div id="pro-mesh-info"
+              style="background: rgba(11,19,43,0.7); padding: 12px; border-radius: 8px; border: 1px solid rgba(56,189,248,0.25); font-size: 12px; margin-bottom: 16px;">
+              <div style="color: #38BDF8; font-weight: 700; margin-bottom: 4px;" id="pro-mesh-name"
+                data-i18n-en="No 3D Mesh Loaded Yet" data-i18n-zh="尚未载入外部网格">No 3D Mesh Loaded Yet</div>
+              <div style="color: #94A3B8;" id="pro-mesh-stats"
+                data-i18n-en="Select a benchmark STL above or drop your local CAD file"
+                data-i18n-zh="请点击上方示例模型或拖入本地 CAD 文件">Select a benchmark STL above or drop your local CAD file</div>
+            </div>
+          </div>
+
+          <hr style="border: none; border-top: 1px solid var(--border-color); margin: 18px 0;">
+
+          <!-- ================= Common Section: Alloy & Electroplating ================= -->
+          <h2 class="panel-title"><span class="step-num">2</span> <span
+              data-i18n-en="Base Alloy &amp; Electroplating Finish" data-i18n-zh="基材合金与表面电镀色泽">Base Alloy &amp; Electroplating Finish</span></h2>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <label class="control-label" for="select-material" data-i18n-en="Base Metal Alloy (Density)"
+                data-i18n-zh="金属合金基材 (Alloy &amp; Density)">Base Metal Alloy (Density)</label>
+            </div>
+            <select id="select-material">
+              <option value="zn-zamak3" selected data-i18n-en="Zamak 3 Zinc Alloy (6.70 g/cm³ · Die-Cast)"
+                data-i18n-zh="3号压铸锌合金 (Zamak 3 - 6.70 g/cm³ · 3D深浮雕首选)">Zamak 3 Zinc Alloy (6.70 g/cm³ · Die-Cast)</option>
+              <option value="cu-c260" data-i18n-en="H65 / C26000 Cartridge Brass (8.50 g/cm³ · Stamped)"
+                data-i18n-zh="H65 冲压黄铜 (C26000 - 8.50 g/cm³ · 高定挑战币首选)">H65 / C26000 Cartridge Brass (8.50 g/cm³ · Stamped)</option>
+              <option value="cu-pure" data-i18n-en="T2 / C11000 Pure Copper (8.90 g/cm³ · Cloisonné)"
+                data-i18n-zh="T2 高纯紫铜 (C11000 - 8.90 g/cm³ · 景泰蓝真珐琅)">T2 / C11000 Pure Copper (8.90 g/cm³ · Cloisonné)</option>
+              <option value="fe-stamped" data-i18n-en="SPCC / DT4 Stamped Iron (7.85 g/cm³ · Economical)"
+                data-i18n-zh="SPCC 冲压软铁 (7.85 g/cm³ · 经济大批量烤漆币)">SPCC / DT4 Stamped Iron (7.85 g/cm³ · Economical)</option>
+              <option value="ss-304" data-i18n-en="SUS304 Stainless Steel (7.93 g/cm³ · Corrosion-Free)"
+                data-i18n-zh="SUS304 不锈钢 (7.93 g/cm³ · 耐磨开瓶器功能币)">SUS304 Stainless Steel (7.93 g/cm³ · Corrosion-Free)</option>
+              <option value="al-6061" data-i18n-en="6061 Anodized Aluminium (2.70 g/cm³ · Featherweight)"
+                data-i18n-zh="6061 阳极氧化铝合金 (2.70 g/cm³ · 极轻量化色彩件)">6061 Anodized Aluminium (2.70 g/cm³ · Featherweight)</option>
+            </select>
+            <div id="material-desc-text" style="font-size: 11px; color: #94A3B8; margin-top: 6px; line-height: 1.4;">
+              High-fluidity hot-chamber die-casting alloy for full 3D high relief and open cutouts (±0.15 mm tolerance)
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label-row">
+              <span class="control-label" data-i18n-en="Electroplating Finish Preview"
+                data-i18n-zh="3D 电镀表面处理预览 (Plating Finish)">Electroplating Finish Preview</span>
+              <span id="val-finish-name" class="control-value" style="font-size: 11.5px;">24K Mirror Gold Plating</span>
+            </div>
+            <div class="finish-swatches" role="radiogroup" aria-label="Electroplating Finish">
+              <button type="button" class="swatch-btn active" data-finish="gold"
+                title="24K Mirror Gold (24K 真金抛光)" aria-label="24K Mirror Gold"></button>
+              <button type="button" class="swatch-btn" data-finish="chrome"
+                title="Bright Nickel / Silver (镜面亮银/亮镍)" aria-label="Bright Nickel / Silver"></button>
+              <button type="button" class="swatch-btn" data-finish="bronze"
+                title="Antique Brushed Bronze (复古拉丝古青铜)" aria-label="Antique Brushed Bronze"></button>
+              <button type="button" class="swatch-btn" data-finish="copper"
+                title="Antique Red Copper (古典做旧红铜)" aria-label="Antique Red Copper"></button>
+              <button type="button" class="swatch-btn" data-finish="black"
+                title="Satin Black Nickel (哑光黑镍/枪黑)" aria-label="Satin Black Nickel"></button>
+              <button type="button" class="swatch-btn" data-finish="two-tone"
+                title="Dual-Plated Gold &amp; Silver (奢华双色金银电镀)" aria-label="Dual-Plated Gold and Silver"></button>
+            </div>
+          </div>
+
+          <!-- Generate Spec Report Button -->
+          <button type="button" id="btn-export-report" class="btn-primary">
+            <span data-i18n-en="📄 Generate DFM Spec &amp; Freight Sheet (PNG)"
+              data-i18n-zh="📄 生成工程克重与外贸装箱核价单 (PNG)">📄 Generate DFM Spec &amp; Freight Sheet (PNG)</span>
+          </button>
+
+        </div>
+      </aside>
+
+      <!-- Right Column: 3D Viewport, KPIs, DFM Banner & Export Logistics -->
+      <section class="viewport-section">
+
+        <!-- 3D Interactive Canvas -->
+        <div class="viewport-wrapper">
+          <div class="viewport-hud-top">
+            <div class="hud-pill">
+              <strong data-i18n-en="3D CAD Workbench:" data-i18n-zh="3D 实时工程台:">3D CAD Workbench:</strong>
+              <span id="hud-dim-summary">Ø 45.0 × 3.5 mm (1.77" × 0.14")</span>
+            </div>
+            <div class="viewport-toolbar" role="toolbar" aria-label="3D Viewport Tools">
+              <button type="button" id="btn-tool-rotate" class="tool-btn active" aria-pressed="true"
+                title="Toggle Auto-Rotation" data-i18n-en="🔄 Auto-Rotate" data-i18n-zh="🔄 自动旋转">🔄 Auto-Rotate</button>
+              <button type="button" id="btn-tool-caliper" class="tool-btn" aria-pressed="false"
+                title="Toggle Digital Vernier Caliper" data-i18n-en="📏 Digital Caliper" data-i18n-zh="📏 卡尺测厚">📏 Digital Caliper</button>
+              <button type="button" id="btn-tool-clip" class="tool-btn" aria-pressed="false"
+                title="Toggle Cross-Section Cutaway" data-i18n-en="🔪 Cross-Section" data-i18n-zh="🔪 剖切观察">🔪 Cross-Section</button>
+              <button type="button" id="btn-tool-wireframe" class="tool-btn" aria-pressed="false"
+                title="Toggle Mesh Wireframe" data-i18n-en="🕸️ Wireframe" data-i18n-zh="🕸️ 网格线框">🕸️ Wireframe</button>
+              <button type="button" id="btn-tool-shock" class="tool-btn" style="display: none;"
+                title="Simulate 2.5g Post-Race Jumping Celebration Shock" data-i18n-en="⚡ 2.5g Shock Test"
+                data-i18n-zh="⚡ 2.5g 跳跃冲击测试">⚡ 2.5g Shock Test</button>
+              <button type="button" id="btn-tool-reset" class="tool-btn" title="Reset Camera View"
+                data-i18n-en="🎯 Reset View" data-i18n-zh="🎯 视角复位">🎯 Reset View</button>
+            </div>
+          </div>
+
+          <div id="three-canvas-container"></div>
+
+          <div class="viewport-hud-bottom">
+            <div class="viewport-legend">
+              <span class="legend-item"><span class="legend-dot" style="background: #F59E0B;"></span> <span
+                  id="legend-alloy-text">Zamak 3 (6.70 g/cm³)</span></span>
+              <span class="legend-item"><span class="legend-dot" style="background: #38BDF8;"></span> <span
+                  id="legend-thickness-text">Thickness: 3.5 mm (0.14")</span></span>
+            </div>
+            <div class="viewport-legend" style="color: #64748B;"
+              data-i18n-en="Left-Drag: Orbit  |  Scroll: Zoom  |  Right-Drag: Pan"
+              data-i18n-zh="左键拖拽旋转 | 滚轮缩放 | 右键平移">
+              Left-Drag: Orbit  |  Scroll: Zoom  |  Right-Drag: Pan
+            </div>
+          </div>
+        </div>
+
+        <!-- 4 Core KPI Readout Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-label" id="kpi-1-label" data-i18n-en="ESTIMATED NET METAL WEIGHT"
+              data-i18n-zh="预估金属净重 (NET METAL WT)">ESTIMATED NET METAL WEIGHT</div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpi-1-val">36.2</span>
+              <span class="kpi-unit" id="kpi-1-unit">g (1.28 oz)</span>
+            </div>
+            <div class="kpi-subtext" id="kpi-1-sub">Effective Volume: 5.40 cm³</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label" id="kpi-2-label" data-i18n-en="PALM HEFT &amp; AREAL DENSITY"
+              data-i18n-zh="掌心面密度与压手指数 (HEFT)">PALM HEFT &amp; AREAL DENSITY</div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpi-2-val">78</span>
+              <span class="kpi-unit" id="kpi-2-unit">/ 100 pts</span>
+            </div>
+            <div class="kpi-subtext" id="kpi-2-sub">Areal Density: 2.28 g/cm²</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label" id="kpi-3-label" data-i18n-en="ZAMAK 3 vs H65 BRASS BENCHMARK"
+              data-i18n-zh="同尺寸 H65 黄铜克重对比">ZAMAK 3 vs H65 BRASS BENCHMARK</div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpi-3-val">45.9</span>
+              <span class="kpi-unit" id="kpi-3-unit">g (Brass)</span>
+            </div>
+            <div class="kpi-subtext" id="kpi-3-sub">H65 Brass is +9.7 g (+26.8%) heavier</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-label" id="kpi-4-label" data-i18n-en="CORE WEB WALL THICKNESS"
+              data-i18n-zh="中心底板净壁厚 (CORE WEB)">CORE WEB WALL THICKNESS</div>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpi-4-val">2.86</span>
+              <span class="kpi-unit">mm</span>
+            </div>
+            <div class="kpi-subtext" id="kpi-4-sub">DFM Rating: OPTIMAL</div>
+          </div>
+        </div>
+
+        <!-- Dynamic Tactile / Neck Ergonomics & DFM Status Banner -->
+        <div id="ergo-status-banner" class="status-banner" role="status" aria-live="polite">
+          <div style="font-size: 26px;" id="ergo-status-icon" aria-hidden="true">🛡️</div>
+          <div style="flex: 1;">
+            <div class="status-title" id="ergo-status-title">Heavyweight Commander Heft (Collector Grade)</div>
+            <div class="status-desc" id="ergo-status-desc">
+              Solid palm heft with 2.28 g/cm² areal density. Delivers an authoritative acoustic clink and substantial tactile authority.
+            </div>
+            <div id="dfm-warning-line" style="font-size: 11.5px; color: #FCD34D; margin-top: 6px; font-weight: 600;">
+              🟢 DFM Rating: OPTIMAL. Core web thickness and aspect ratio ensure smooth cavity filling and zero shrink marks.
+            </div>
+          </div>
+        </div>
+
+        <!-- B2B Export Carton & Air/Sea Freight Calculator -->
+        <div class="shipping-card">
+          <div class="shipping-header">
+            <div>
+              <h2 style="font-size: 14px; font-weight: 700; color: #F8FAFC; margin: 0;"
+                data-i18n-en="📦 B2B Export Anti-Burst Carton Packing &amp; Freight Calculator (≤18.0 kg / 39.7 lbs per Ctn)"
+                data-i18n-zh="📦 外贸大货防爆箱装箱规格与国际海空运费估算 (单箱 ≤18.0 kg / 39.7 lbs)">
+                📦 B2B Export Anti-Burst Carton Packing &amp; Freight Calculator (≤18.0 kg / 39.7 lbs per Ctn)
+              </h2>
+              <div style="font-size: 11.5px; color: #94A3B8; margin-top: 2px;"
+                data-i18n-en="Standard K=K Double-Wall Master Carton (35×28×25 cm) · Prevents box bursting &amp; carrier overweight surcharges"
+                data-i18n-zh="基于五层加硬双瓦楞出口纸箱 (35×28×25 cm)，自动计算防破损安全装箱数与计费重">
+                Standard K=K Double-Wall Master Carton (35×28×25 cm) · Prevents box bursting &amp; carrier overweight surcharges
+              </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <label for="input-order-qty" style="font-size: 12px; color: #94A3B8; font-weight: 600;"
+                data-i18n-en="Order Qty:" data-i18n-zh="采购订单数量:">Order Qty:</label>
+              <input type="number" id="input-order-qty" value="500" min="50" max="100000" step="50"
+                style="width: 95px; background: #0B132B; border: 1px solid #38BDF8; color: #38BDF8; padding: 6px 10px; border-radius: 6px; font-family: monospace; font-weight: 700; font-size: 14px;">
+              <span style="font-size: 12px; color: #94A3B8;">pcs</span>
+            </div>
+          </div>
+
+          <div class="shipping-grid">
+            <div class="shipping-item">
+              <div class="shipping-label" data-i18n-en="Safe Packing &amp; Total Cartons"
+                data-i18n-zh="安全装箱量 &amp; 总箱数">Safe Packing &amp; Total Cartons</div>
+              <div class="shipping-value" id="ship-cartons">2 Ctns (350 pcs/ctn)</div>
+            </div>
+            <div class="shipping-item">
+              <div class="shipping-label" data-i18n-en="Total Gross Weight (Deadweight)"
+                data-i18n-zh="整单预估总毛重 (实重计费)">Total Gross Weight (Deadweight)</div>
+              <div class="shipping-value" id="ship-gross-wt">20.8 kg (45.9 lbs)</div>
+            </div>
+            <div class="shipping-item">
+              <div class="shipping-label" data-i18n-en="Avg Carton Weight &amp; Volume"
+                data-i18n-zh="单箱均重 &amp; 总立方体积">Avg Carton Weight &amp; Volume</div>
+              <div class="shipping-value" id="ship-cbm">10.4 kg/ctn | 0.049 CBM</div>
+            </div>
+            <div class="shipping-item">
+              <div class="shipping-label" data-i18n-en="Est. Air Express vs DDP Sea"
+                data-i18n-zh="预估国际快递 vs 海运专线">Est. Air Express vs DDP Sea</div>
+              <div class="shipping-value" id="ship-cost" style="color: #FBBF24;">~$141 vs ~$165</div>
+            </div>
+          </div>
+
+          <div class="shipping-advice-box" id="ship-advice-text">
+            💡 Small-Batch Express Optimal: Door-to-door Air Express (DHL/FedEx/UPS) is most cost-effective without minimum LCL port fees.
+          </div>
+        </div>
+
+        <!-- Cross-Material Comparison Reference Cards -->
+        <div class="shipping-card" style="margin-top: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div>
+              <h2 style="font-size: 14px; font-weight: 700; color: #F8FAFC; margin: 0;"
+                data-i18n-en="⚖️ Alloy Selection Matrix: Zamak 3 Die-Casting vs. H65 Brass Stamping vs. 6061 Aluminium"
+                data-i18n-zh="⚖️ 买家选型内参：3号锌合金压铸 vs H65 黄铜冷冲压 vs 6061 铝合金">
+                ⚖️ Alloy Selection Matrix: Zamak 3 Die-Casting vs. H65 Brass Stamping vs. 6061 Aluminium
+              </h2>
+              <div style="font-size: 11.5px; color: #94A3B8; margin-top: 2px;"
+                data-i18n-en="Click any alloy card below to switch substrate and compare mass, tooling tolerance &amp; freight impact in real time"
+                data-i18n-zh="点击下方卡片可一键切换材质，实时对比克重手感、公差与国际物流成本差异">
+                Click any alloy card below to switch substrate and compare mass, tooling tolerance &amp; freight impact in real time
+              </div>
+            </div>
+          </div>
+
+          <div class="alloy-compare-grid">
+            <!-- Card 1: Zamak 3 -->
+            <div class="material-compare-card" data-mat-select="zn-zamak3" role="button" tabindex="0"
+              style="background: rgba(11, 19, 43, 0.65); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 14px; cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; font-weight: 700; color: #38BDF8;"
+                  data-i18n-en="Zamak 3 Zinc Alloy" data-i18n-zh="3号压铸锌合金 (Zamak 3)">Zamak 3 Zinc Alloy</span>
+                <span
+                  style="font-size: 11px; background: rgba(56,189,248,0.15); color: #38BDF8; padding: 2px 6px; border-radius: 4px;">6.70
+                  g/cm³</span>
+              </div>
+              <div style="font-size: 11.5px; color: #CBD5E1; margin-top: 8px; line-height: 1.5;"
+                data-i18n-en="• Best for: Full 3D high relief, open cutouts &amp; custom shaped marathon medals (±0.15 mm)<br>• Tooling: Economical mold fee, fast cycle time"
+                data-i18n-zh="• 工艺强项：擅长 3D 高浮雕、复杂内镂空通孔与异形赛事奖牌（公差 ±0.15 mm）<br>• 模具成本：模具费亲民，大货成型周期快">
+                • Best for: Full 3D high relief, open cutouts &amp; custom shaped marathon medals (±0.15 mm)<br>• Tooling: Economical mold fee, fast cycle time
+              </div>
+            </div>
+
+            <!-- Card 2: H65 Brass -->
+            <div class="material-compare-card" data-mat-select="cu-c260" role="button" tabindex="0"
+              style="background: rgba(11, 19, 43, 0.65); border: 1px solid rgba(245, 158, 11, 0.35); border-radius: 8px; padding: 14px; cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; font-weight: 700; color: #FBBF24;"
+                  data-i18n-en="H65 Stamped Brass" data-i18n-zh="H65 冲压黄铜 (C26000)">H65 Stamped Brass</span>
+                <span
+                  style="font-size: 11px; background: rgba(245,158,11,0.15); color: #FBBF24; padding: 2px 6px; border-radius: 4px;">8.50
+                  g/cm³</span>
+              </div>
+              <div style="font-size: 11.5px; color: #CBD5E1; margin-top: 8px; line-height: 1.5;"
+                data-i18n-en="• Best for: Military &amp; executive challenge coins, razor-sharp 2D micro-text &amp; mirror fields (±0.08 mm)<br>• Tactile Heft: +26.8% heavier than Zinc Alloy"
+                data-i18n-zh="• 工艺强项：极高致密度，冷冲压字口如刀刻般锐利（公差 ±0.08 mm），镜面电镀无气孔<br>• 手感优势：同体积比锌合金重 +26.8%，坠手感极强">
+                • Best for: Military &amp; executive challenge coins, razor-sharp 2D micro-text &amp; mirror fields (±0.08 mm)<br>• Tactile Heft: +26.8% heavier than Zinc Alloy
+              </div>
+            </div>
+
+            <!-- Card 3: 6061 Aluminium -->
+            <div class="material-compare-card" data-mat-select="al-6061" role="button" tabindex="0"
+              style="background: rgba(11, 19, 43, 0.65); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 14px; cursor: pointer;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 13px; font-weight: 700; color: #34D399;"
+                  data-i18n-en="6061 Anodized Aluminium" data-i18n-zh="6061 阳极氧化铝合金">6061 Anodized Aluminium</span>
+                <span
+                  style="font-size: 11px; background: rgba(16,185,129,0.15); color: #34D399; padding: 2px 6px; border-radius: 4px;">2.70
+                  g/cm³</span>
+              </div>
+              <div style="font-size: 11.5px; color: #CBD5E1; margin-top: 8px; line-height: 1.5;"
+                data-i18n-en="• Best for: Vibrant anodized colors, bottle-opener tags &amp; oversized youth/kids medals<br>• Freight Saving: -60% lighter air express weight"
+                data-i18n-zh="• 工艺强项：支持阳极氧化炫彩金属色，适合超大尺寸少儿赛事奖牌（零颈椎负担）<br>• 物流优势：比锌合金减重 60%，空运运费大幅降低">
+                • Best for: Vibrant anodized colors, bottle-opener tags &amp; oversized youth/kids medals<br>• Freight Saving: -60% lighter air express weight
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 3. Footer & Verified Authoritative Backlinks -->
+    <footer class="lab-footer">
+      <div data-i18n-en="© 2026 Gold Valley Industrial Gifts Co., Ltd. Open-Source Hardware Engineering Lab (MIT License)."
+        data-i18n-zh="© 2026 Gold Valley Industrial Gifts Co., Ltd. (金瓒五金工艺) · 开源五金工程实验室 (MIT License)">
+        © 2026 Gold Valley Industrial Gifts Co., Ltd. Open-Source Hardware Engineering Lab (MIT License).
+      </div>
+      <nav class="footer-links" aria-label="Factory Engineering Resources">
+        <a href="https://www.goldvalleyltd.com/challenge-coins/" target="_blank" rel="noopener"
+          data-i18n-en="Custom Challenge Coins" data-i18n-zh="定制挑战币产线">Custom Challenge Coins</a>
+        <a href="https://www.goldvalleyltd.com/custom-medals/" target="_blank" rel="noopener"
+          data-i18n-en="Custom Sports Medals" data-i18n-zh="定制赛事奖牌产线">Custom Sports Medals</a>
+        <a href="https://www.goldvalleyltd.com/news/challenge-coin-design-that-makes-one-story-stand-out/"
+          target="_blank" rel="noopener" data-i18n-en="Coin Design &amp; Relief Guide"
+          data-i18n-zh="挑战币浮雕设计指南">Coin Design &amp; Relief Guide</a>
+        <a href="https://www.goldvalleyltd.com/news/how-to-keep-custom-challenge-coins-consistent/" target="_blank"
+          rel="noopener" data-i18n-en="Batch QC &amp; Consistency" data-i18n-zh="批量品控一致性指南">Batch QC &amp; Consistency</a>
+        <a href="https://www.goldvalleyltd.com/contact-us/" target="_blank" rel="noopener"
+          data-i18n-en="Request Free DFM &amp; Tooling Quote" data-i18n-zh="获取免费模具 DFM 审查与报价">Request Free DFM &amp; Tooling Quote</a>
+      </nav>
+    </footer>
+
+  </div>
+
+  <!-- 4. Native <dialog> Modal for High-Res Spec Sheet Preview & Download -->
+  <dialog id="report-modal" class="report-dialog" closedby="any" aria-labelledby="modal-report-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-report-title" style="font-size: 15px; font-weight: 700; color: #F8FAFC; margin: 0;"
+          data-i18n-en="📊 Gold Valley DFM Engineering &amp; Logistics Report Preview"
+          data-i18n-zh="📊 金瓒奖牌与挑战币工程克重及装箱核价单预览">
+          📊 Gold Valley DFM Engineering &amp; Logistics Report Preview
+        </h2>
+        <button type="button" id="btn-close-modal" class="tool-btn" aria-label="Close modal"
+          data-i18n-en="✕ Close" data-i18n-zh="✕ 关闭">✕ Close</button>
+      </div>
+      <div class="modal-body">
+        <img id="report-preview-img" class="modal-preview-img" src=""
+          alt="Medal and Coin DFM Engineering Spec Report">
+      </div>
+      <div class="modal-footer">
+        <a href="https://www.goldvalleyltd.com/contact-us/" target="_blank" rel="noopener" class="tool-btn"
+          style="text-decoration: none; padding: 10px 16px; border-color: #38BDF8; color: #38BDF8;"
+          data-i18n-en="💬 Send Spec Sheet to Factory Engineer for Quote"
+          data-i18n-zh="💬 发送此规格单至金瓒工程师获取精准报价">
+          💬 Send Spec Sheet to Factory Engineer for Quote
+        </a>
+        <button type="button" id="btn-download-png" class="btn-primary"
+          style="width: auto; margin-top: 0; padding: 10px 22px;"
+          data-i18n-en="⬇️ Download High-Res PNG (1200×1600)"
+          data-i18n-zh="⬇️ 下载高清 PNG 规格单 (1200×1600)">
+          ⬇️ Download High-Res PNG (1200×1600)
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Core Scripts -->
+  <script src="js/engine/presets.js"></script>
+  <script src="js/engine/geometry.js"></script>
+  <script src="js/engine/physics.js"></script>
+  <script src="js/engine/shipping.js"></script>
+  <script src="js/viewer/scene.js"></script>
+  <script src="js/viewer/materials.js"></script>
+  <script src="js/viewer/builder-coin.js"></script>
+  <script src="js/viewer/builder-medal.js"></script>
+  <script src="js/viewer/assembly.js"></script>
+  <script src="js/viewer/loader.js"></script>
+  <script src="js/report/export-report.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+
+</html>
