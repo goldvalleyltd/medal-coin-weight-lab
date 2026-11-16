@@ -44,7 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // 2. Initialize 3D Scene & Assembly
-    const sceneManager = new LabScene('three-canvas-container');
+    const canvasContainer = document.getElementById('three-canvas-container');
+    const sceneManager = new LabScene(canvasContainer);
     const assembly = new MetalAssembly(sceneManager);
 
     // 3. Language Switching Engine (EN / 中文)
