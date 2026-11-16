@@ -733,6 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('kpi-4-label').textContent = isZh ? '中心底板净壁厚 (CORE WEB)' : 'CORE WEB WALL THICKNESS';
             document.getElementById('kpi-4-val').textContent = geo.coreThicknessMm.toFixed(2);
+            document.getElementById('kpi-4-unit').textContent = 'mm';
             document.getElementById('kpi-4-sub').textContent = isZh
                 ? `车间成型评级: ${phys.dfmStatus}`
                 : `DFM Rating: ${phys.dfmStatus}`;
